@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MINUME XVII — Planos & Roles</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#141B22;
+    --navy-900:#0A2445;
+    --navy-800:#12335F;
+    --navy-700:#194076;
+    --navy-600:#245594;
+    --gold:#B5852C;
+    --gold-line:#C7962F;
+    --paper:#F3F1EA;
+    --panel:#FBFAF6;
+    --line:#CFC9BA;
+    --line-strong:#3A3A34;
+    --muted:#8B8779;
+    --muted-2:#6B7686;
+    --sheraton:#194076;
+    --jaragua:#164B8C;
+    --malecon:#B5852C;
+    --shadow:0 10px 26px -14px rgba(20,27,34,.22);
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Space Grotesk", sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .mono{font-family:"IBM Plex Mono", monospace;}
+  .display{font-family:"Fraunces", serif;}
+
+  header.top{
+    padding:34px 5vw 20px;
+    display:flex; flex-wrap:wrap; gap:20px; align-items:flex-end; justify-content:space-between;
+    border-bottom:1px solid var(--line);
+  }
+  .brand-eyebrow{
+    text-transform:uppercase; letter-spacing:.2em; font-size:11px; color:var(--navy-600);
+    font-family:"IBM Plex Mono", monospace; display:flex; align-items:center; gap:10px;
+  }
+  .brand-eyebrow::before{content:""; width:20px; height:1px; background:var(--gold);}
+  h1.title{
+    font-family:"Fraunces", serif; font-weight:700; font-size:clamp(30px,4.4vw,50px);
+    line-height:1; margin:8px 0 4px; color:var(--navy-900); letter-spacing:-0.01em;
+  }
+  h1.title em{font-style:italic; font-weight:500; color:var(--navy-700);}
+  .subtitle{color:#4A5468; font-size:14.5px; max-width:520px; line-height:1.5;}
+  .counter-row{display:flex; gap:10px;}
+  .counter{background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:8px 12px; text-align:right; min-width:70px;}
+  .counter .n{font-family:"Fraunces",serif; font-weight:700; font-size:19px; color:var(--navy-900); display:block;}
+  .counter .l{font-size:9.5px; text-transform:uppercase; letter-spacing:.1em; color:var(--muted-2);}
+
+  /* Tabs */
+  .tabbar{
+    display:flex; gap:0; padding:0 5vw; border-bottom:1px solid var(--line);
+    background:var(--paper); position:sticky; top:0; z-index:40;
+  }
+  .tab{
+    padding:16px 20px 13px; font-family:"IBM Plex Mono",monospace; font-size:12px;
+    text-transform:uppercase; letter-spacing:.12em; color:var(--muted-2); cursor:pointer;
+    border-bottom:2px solid transparent; background:none; border-top:none; border-left:none; border-right:none;
+  }
+  .tab[data-active="true"]{color:var(--navy-900); border-bottom-color:var(--gold); font-weight:600;}
+  .tab:hover{color:var(--navy-800);}
+
+  main{padding:26px 5vw 80px;}
+  .tab-panel{display:none;}
+  .tab-panel[data-visible="true"]{display:block;}
+
+  /* Toolbar */
+  .toolbar{
+    display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between;
+    background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+    padding:12px 16px; margin-bottom:20px;
+  }
+  .search-wrap{flex:1; min-width:200px; max-width:340px;}
+  .search-wrap input{
+    width:100%; border:1px solid var(--line); border-radius:7px; background:#fff;
+    padding:9px 12px; font-size:13px; font-family:"Space Grotesk",sans-serif; color:var(--ink);
+  }
+  .search-wrap input:focus{outline:2px solid var(--navy-700); outline-offset:1px;}
+  .check-group{display:flex; gap:16px; flex-wrap:wrap; font-size:12.5px; color:var(--ink);}
+  .check-group label{display:flex; align-items:center; gap:6px; cursor:pointer; font-family:"Space Grotesk",sans-serif;}
+  .check-group input[type=checkbox]{accent-color:var(--navy-800); width:14px; height:14px;}
+  .btn-row{display:flex; gap:8px;}
+  .btn{
+    border:1px solid var(--line-strong); background:#fff; color:var(--ink);
+    padding:8px 14px; border-radius:7px; font-size:12.5px; cursor:pointer; font-family:"Space Grotesk",sans-serif;
+  }
+  .btn:hover{background:var(--navy-900); color:#fff; border-color:var(--navy-900);}
+  .btn.primary{background:var(--navy-900); color:#fff;}
+  .btn.primary:hover{background:var(--navy-800);}
+
+  /* Layout: plan + sidebar */
+  .work-grid{display:grid; grid-template-columns:1fr 300px; gap:20px; align-items:start;}
+  @media (max-width:980px){ .work-grid{grid-template-columns:1fr;} }
+
+  .plan-card{
+    background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+    padding:26px 26px 30px; box-shadow:var(--shadow); overflow-x:auto;
+  }
+  .plan-card h2{font-family:"Fraunces",serif; font-weight:600; font-size:22px; margin:0 0 4px; color:var(--navy-900);}
+  .plan-card .plan-sub{font-size:13px; color:var(--muted-2); margin-bottom:18px;}
+  .cluster-label{
+    text-align:center; font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--muted); margin:0 0 6px; border-bottom:1px solid var(--line); padding-bottom:8px;
+  }
+  .plan-canvas{position:relative; margin:0 auto 30px;}
+
+  .space-shape{
+    position:absolute; border:1.5px solid var(--line-strong); background:var(--panel);
+    display:flex; align-items:center; justify-content:center; text-align:center; padding:6px;
+    cursor:pointer; transition:.15s ease; font-family:"IBM Plex Mono",monospace;
+  }
+  .space-shape .lbl{font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink); font-weight:600;}
+  .space-shape:hover{background:#EFEAD9; border-color:var(--navy-800);}
+  .space-shape.selected{border-color:var(--navy-900); border-width:2px; background:#E7EEF6; box-shadow:0 0 0 3px rgba(10,36,69,.12);}
+  .space-shape.approx{border-style:dashed; border-color:var(--gold-line); background:#FBF6EA;}
+  .space-shape.approx .lbl{color:#7A5A10;}
+  .space-shape.assigned::after{
+    content:""; position:absolute; top:6px; right:6px; width:8px; height:8px; border-radius:50%;
+    background:#2E7D53;
+  }
+  .space-shape.dim{opacity:.28; pointer-events:none;}
+
+  .others-block{margin-top:6px;}
+  .others-title{
+    font-size:11px; text-transform:uppercase; letter-spacing:.12em; color:var(--muted-2);
+    font-family:"IBM Plex Mono",monospace; margin:26px 0 12px; padding-top:18px; border-top:1px solid var(--line);
+  }
+  .others-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:10px;}
+  .other-card{
+    border:1px solid var(--line); border-radius:8px; background:#fff; padding:12px 13px;
+    cursor:pointer; text-align:left; transition:.15s ease; position:relative;
+  }
+  .other-card:hover{border-color:var(--navy-800); transform:translateY(-1px);}
+  .other-card.selected{border-color:var(--navy-900); border-width:1.6px; background:#E7EEF6;}
+  .other-card.approx{border-style:dashed; border-color:var(--gold-line); background:#FBF6EA;}
+  .other-card .name{font-size:13px; font-weight:600; color:var(--navy-900); margin-bottom:4px;}
+  .other-card .cap{font-size:11px; color:var(--muted-2); line-height:1.4;}
+  .other-card.assigned::after{content:""; position:absolute; top:10px; right:10px; width:7px; height:7px; border-radius:50%; background:#2E7D53;}
+
+  /* Sidebar */
+  .sidebar{
+    position:sticky; top:76px; background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+    padding:20px; box-shadow:var(--shadow); min-height:220px;
+  }
+  .sidebar .placeholder{font-size:13px; color:var(--muted-2); line-height:1.6;}
+  .sidebar .placeholder .note{
+    margin-top:14px; padding-top:14px; border-top:1px solid var(--line); font-size:12px; color:var(--muted); line-height:1.6;
+  }
+  .side-hotel{font-family:"IBM Plex Mono",monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:.12em; color:var(--navy-600);}
+  .side-name{font-family:"Fraunces",serif; font-size:20px; font-weight:600; color:var(--navy-900); margin:5px 0 3px;}
+  .side-cap{font-size:12px; color:var(--muted-2); margin-bottom:16px; line-height:1.5;}
+  .assignee-list{display:flex; flex-direction:column; gap:7px; margin-bottom:16px;}
+  .assignee{
+    display:flex; align-items:center; justify-content:space-between; gap:8px;
+    border:1px solid var(--line); border-radius:8px; padding:9px 11px; background:#fff;
+  }
+  .assignee .who{font-size:13px; font-weight:600; color:var(--navy-900);}
+  .assignee .role{font-size:11px; color:var(--navy-600); font-family:"IBM Plex Mono",monospace;}
+  .del-btn{border:none; background:none; color:#A5432E; cursor:pointer; font-size:11px; font-family:"IBM Plex Mono",monospace; text-decoration:underline; opacity:.7;}
+  .del-btn:hover{opacity:1;}
+  .no-assignees{font-size:12px; color:var(--muted); padding:10px 0;}
+  .form-label{font-size:10.5px; text-transform:uppercase; letter-spacing:.1em; color:var(--muted-2); font-family:"IBM Plex Mono",monospace; margin:12px 0 6px; display:block;}
+  .form-label:first-child{margin-top:0;}
+  input.field, select.field{
+    width:100%; border:1px solid var(--line); border-radius:7px; padding:9px 11px; font-size:13.5px;
+    font-family:"Space Grotesk",sans-serif; background:#fff; color:var(--ink);
+  }
+  input.field:focus, select.field:focus{outline:2px solid var(--navy-700); outline-offset:1px;}
+  .add-btn{
+    margin-top:14px; width:100%; background:var(--navy-900); color:#fff; border:none; border-radius:8px;
+    padding:11px; font-size:13px; font-weight:600; cursor:pointer; font-family:"Space Grotesk",sans-serif;
+  }
+  .add-btn:hover{background:var(--navy-800);}
+
+  /* Connection diagram (Malecón tab) */
+  .connect-wrap{margin-top:8px;}
+  .connect-row{display:flex; align-items:center; gap:0; overflow-x:auto; padding:20px 4px 8px;}
+  .connect-node{
+    flex:0 0 auto; text-align:center; min-width:140px; padding:16px 14px; border:1.5px solid var(--line-strong);
+    border-radius:10px; background:var(--panel); font-family:"IBM Plex Mono",monospace;
+  }
+  .connect-node.hi{border-color:var(--gold-line); background:#FBF6EA;}
+  .connect-node .k{font-size:10px; text-transform:uppercase; letter-spacing:.1em; color:var(--muted-2); display:block; margin-bottom:5px;}
+  .connect-node .v{font-family:"Fraunces",serif; font-size:16px; font-weight:600; color:var(--navy-900);}
+  .connect-arrow{flex:0 0 auto; width:56px; height:2px; background:repeating-linear-gradient(90deg, var(--gold-line) 0 8px, transparent 8px 14px); position:relative;}
+  .connect-arrow::after{content:"→"; position:absolute; right:-4px; top:-11px; color:var(--gold-line); font-size:16px;}
+  .route-note{font-size:12.5px; color:var(--muted-2); margin-top:14px; line-height:1.6; max-width:640px;}
+
+  footer.pagefoot{padding:28px 5vw 60px; text-align:center; color:var(--muted); font-size:11.5px; font-family:"IBM Plex Mono",monospace;}
+  .save-toast{
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--navy-900); color:#fff; padding:10px 18px; border-radius:999px; font-size:12px;
+    opacity:0; pointer-events:none; transition:.25s ease; z-index:120; font-family:"IBM Plex Mono",monospace;
+  }
+  .save-toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div>
+    <div class="brand-eyebrow">Coordinación de sede · Santo Domingo</div>
+    <h1 class="title">MINUME <em>XVII</em></h1>
+    <div class="subtitle">Planos a escala relativa de cada propiedad, reconstruidos a partir de los cuadros de renta de salones, más la conexión real hacia el Malecón Terrace. Selecciona un espacio para asignar personal.</div>
+  </div>
+  <div class="counter-row">
+    <div class="counter"><span class="n" id="ctSpaces">0</span><span class="l">Espacios</span></div>
+    <div class="counter"><span class="n" id="ctAssigned">0</span><span class="l">Cubiertos</span></div>
+    <div class="counter"><span class="n" id="ctPeople">0</span><span class="l">Roles</span></div>
+  </div>
+</header>
+
+<div class="tabbar" id="tabbar"></div>
+
+<main id="mainArea"></main>
+
+<footer class="pagefoot">MINUME XVII — Planos reconstruidos a escala relativa · No sustituyen los planos arquitectónicos oficiales del hotel</footer>
+<div class="save-toast" id="saveToast">Cambios guardados</div>
+
+<script>
+(function(){
+  /* ---------------- DATA ---------------- */
+  const HOTEL_LABEL = {sheraton:'Sheraton Santo Domingo', jaragua:'Hotel Jaragua', malecon:'Malecón Terrace'};
+
+  const sheratonShapes = [
+    {id:'s-constanza', name:'Constanza', x:20, y:20, w:160, h:110, cap:'30.3×52.5 ft · Banquete 100'},
+    {id:'s-bonanza',   name:'Bonanza',   x:20, y:140, w:160, h:120, cap:'40.5×52.5 ft · Banquete 130'},
+    {id:'s-samana',    name:'Samaná',    x:20, y:270, w:160, h:110, cap:'30.3×52.5 ft · Banquete 100'},
+    {id:'s-yarey',     name:'Yarey',     x:220, y:20, w:190, h:390,
+      cap:'51.18×73.16 ft · Banquete 200',
+      clip:'polygon(0 0,100% 0,100% 32%,76% 32%,76% 58%,100% 58%,100% 100%,0 100%)'},
+    {id:'s-davinci',   name:'Da Vinci',  x:450, y:20, w:190, h:390, cap:'45.7×35.4 ft · Banquete 70'},
+    {id:'s-malecon',   name:'Malecón Terrace', x:20, y:450, w:620, h:150, approx:true,
+      cap:'118.17×75.13 ft · Banquete 500 · terraza frente al mar', hotel:'malecon'},
+  ];
+  const sheratonOthers = [
+    {id:'s-gransalon',   name:'Gran Salón', cap:'Constanza + Bonanza + Samaná unidos · Banquete 335'},
+    {id:'s-boardroom',   name:'Board Room', cap:'Sala ejecutiva fija'},
+    {id:'s-este1', name:'Este I',  cap:'36.5 × 18 ft · Banquete 40'},
+    {id:'s-este2', name:'Este II', cap:'24.3 × 18 ft · Banquete 30'},
+    {id:'s-este3', name:'Este III',cap:'24.5 × 18 ft · Banquete 30'},
+    {id:'s-este4', name:'Este IV', cap:'24.5 × 18 ft · Banquete 30'},
+    {id:'s-este5', name:'Este V',  cap:'24.5 × 18 ft · Banquete 30'},
+    {id:'s-este6', name:'Este VI', cap:'24.5 × 18 ft · Banquete 30'},
+    {id:'s-esteii-iii', name:'Este II-III', cap:'Unión de Este II y III · Banquete 55'},
+  ];
+
+  const jaraguaShapes = [
+    {id:'j-anacaonaA', name:'Anacaona A', x:20, y:40, w:190, h:150, cap:'18×13 m · Teatro 255'},
+    {id:'j-anacaonaB', name:'Anacaona B', x:214, y:40, w:190, h:150, cap:'18×13 m · Teatro 255'},
+    {id:'j-anacaonaC', name:'Anacaona C', x:408, y:40, w:190, h:150, cap:'18×13 m · Teatro 255'},
+    {id:'j-foyer',     name:'Foyer del Salón', x:20, y:198, w:578, h:60, cap:'27×9 m · Recepción 85'},
+    {id:'j-banos-salon', name:'Baños (Salón)', x:20, y:266, w:100, h:110, cap:'Servicios sanitarios'},
+    {id:'j-marien',    name:'Marién', x:124, y:266, w:114, h:110, cap:'8.8×8.9 m · Teatro 50'},
+    {id:'j-magua',     name:'Maguá', x:242, y:266, w:114, h:110, cap:'8.8×8.9 m · Teatro 50'},
+    {id:'j-higuey',    name:'Higüey', x:360, y:266, w:114, h:110, cap:'8.8×8.9 m · Teatro 50'},
+    {id:'j-maguana',   name:'Maguana', x:478, y:266, w:120, h:110, cap:'13×8.9 m · Teatro 90'},
+    {id:'j-soldeoro',  name:'Sol de Oro', x:660, y:40, w:150, h:150, cap:'17×8.3 m · Teatro 125'},
+    {id:'j-banos-jardines', name:'Baños (Jardines)', x:818, y:40, w:70, h:150, cap:'Servicios sanitarios'},
+    {id:'j-teatro', name:'Teatro La Fiesta', x:20, y:400, w:868, h:140, approx:true,
+      cap:'Segundo piso, acceso por pasillo · Banquete 750'},
+  ];
+  const jaraguaOthers = [
+    {id:'j-lasolas',  name:'Las Olas', cap:'7.3×13 m · Banquete 50'},
+    {id:'j-palmcourt',name:'Palm Court', cap:'Coctel 425 · jardín'},
+    {id:'j-oceanpark',name:'Ocean Park', cap:'Coctel 255 · jardín'},
+    {id:'j-boardA',   name:'Executive Board Room A', cap:'Mesa fija, máx. 15'},
+    {id:'j-boardB',   name:'Executive Board Room B', cap:'Mesa fija, máx. 8'},
+    {id:'j-boardC',   name:'Executive Board Room C', cap:'Mesa fija, máx. 6'},
+    {id:'j-atabey',   name:'Atabey', cap:'9.7×9.4 m · máx. 40 pax'},
+  ];
+
+  const maleconShapes = [
+    {id:'m-terrace', name:'Malecón Terrace', x:20, y:20, w:700, h:220, approx:true,
+      cap:'118.17×75.13 ft · Teatro 900 · Recepción 1,000 · Banquete 500 · terraza frente al mar'},
+  ];
+  const connectNodes = [
+    {k:'Origen', v:'Hotel Jaragua'},
+    {k:'Cruce', v:'Casino'},
+    {k:'Sede', v:'Sheraton'},
+    {k:'Destino', v:'Malecón Terrace', hi:true},
+  ];
+
+  const TABS = [
+    {id:'sheraton', label:'Sheraton Santo Domingo',
+      planTitle:'Sheraton Santo Domingo — Nivel de salones',
+      planSub:'Formas reconstruidas a escala relativa a partir del plano de renta de salones del hotel.',
+      canvasW:840, canvasH:620, shapes:sheratonShapes, others:sheratonOthers},
+    {id:'jaragua', label:'Hotel Jaragua',
+      planTitle:'Hotel Jaragua — Planta baja, salón Anacaona',
+      planSub:'Formas reconstruidas a escala relativa a partir del plano de renta de salones del hotel. Teatro La Fiesta se ubica en el segundo piso.',
+      canvasW:900, canvasH:560, shapes:jaraguaShapes, others:jaraguaOthers},
+    {id:'malecon', label:'Malecón Terrace · Conexión',
+      planTitle:'Malecón Terrace — Terraza frente al mar',
+      planSub:'Ubicado junto al Sheraton, sin plano arquitectónico oficial disponible; forma reconstruida con base en la dirección real de la propiedad.',
+      canvasW:740, canvasH:260, shapes:maleconShapes, others:[], connection:true},
+  ];
+
+  const ALL_SPACES = {};
+  TABS.forEach(t=>{
+    t.shapes.forEach(s=> ALL_SPACES[s.id] = Object.assign({}, s, {hotel: s.hotel || t.id}));
+    t.others.forEach(s=> ALL_SPACES[s.id] = Object.assign({}, s, {hotel: t.id}));
+  });
+
+  const STORAGE_KEY = 'minume17-assignments-v2';
+  let assignments = {};
+  let selectedId = null;
+  let currentTab = 'sheraton';
+  const tabState = {};
+  TABS.forEach(t=> tabState[t.id] = {q:'', libre:false, asignado:false, approx:false});
+
+  /* ---------------- BUILD TABS ---------------- */
+  const tabbar = document.getElementById('tabbar');
+  TABS.forEach(t=>{
+    const b = document.createElement('button');
+    b.className = 'tab';
+    b.dataset.tab = t.id;
+    b.dataset.active = t.id==='sheraton' ? 'true':'false';
+    b.textContent = t.label;
+    b.addEventListener('click', ()=> switchTab(t.id));
+    tabbar.appendChild(b);
+  });
+
+  const mainArea = document.getElementById('mainArea');
+  TABS.forEach(t=>{
+    const panel = document.createElement('section');
+    panel.className = 'tab-panel';
+    panel.dataset.panel = t.id;
+    panel.dataset.visible = t.id==='sheraton' ? 'true':'false';
+    panel.innerHTML = `
+      <div class="toolbar">
+        <div class="search-wrap"><input type="text" placeholder="Buscar espacio por nombre…" data-q="${t.id}"></div>
+        <div class="check-group">
+          <label><input type="checkbox" data-libre="${t.id}"> Libre</label>
+          <label><input type="checkbox" data-asignado="${t.id}"> Asignado</label>
+          <label><input type="checkbox" data-approx="${t.id}"> Zona aproximada</label>
+        </div>
+        <div class="btn-row">
+          <button class="btn" data-refresh="${t.id}">Actualizar</button>
+          <button class="btn primary" data-copy="${t.id}">Copiar resumen</button>
+        </div>
+      </div>
+      <div class="work-grid">
+        <div class="plan-card">
+          <h2>${t.planTitle}</h2>
+          <div class="plan-sub">${t.planSub}</div>
+          <p class="cluster-label">Nivel de salones</p>
+          <div class="plan-canvas" data-canvas="${t.id}" style="width:${t.canvasW}px; max-width:100%; height:${t.canvasH}px;"></div>
+          ${t.connection ? `<div class="connect-wrap"><p class="cluster-label">Conexión Jaragua → Sheraton → Malecón Terrace</p>
+            <div class="connect-row" id="connectRow"></div>
+            <div class="route-note">Ruta peatonal real por el Malecón: sale del Hotel Jaragua, cruza frente al Casino, continúa por el Sheraton y llega al Malecón Terrace (recorrido de referencia levantado sobre Google Maps). Tiempo estimado a pie: 5–7 minutos.</div>
+          </div>` : ''}
+          ${t.others.length ? `<div class="others-block">
+            <div class="others-title">Otros espacios (${HOTEL_LABEL[t.id]}) — sin ubicación en el plano gráfico</div>
+            <div class="others-grid" data-others="${t.id}"></div>
+          </div>` : ''}
+        </div>
+        <aside class="sidebar" data-sidebar="${t.id}">
+          <div class="placeholder">
+            Selecciona un espacio en el croquis o en la lista de módulos para asignar personal.
+            <div class="note">Los espacios marcados como "zona aproximada" no están dibujados en los planos originales del hotel; se ubican con base en la dirección real de cada propiedad para poder asignarles personal igualmente.</div>
+          </div>
+        </aside>
+      </div>
+    `;
+    mainArea.appendChild(panel);
+
+    const canvas = panel.querySelector(`[data-canvas="${t.id}"]`);
+    canvas.style.position = 'relative';
+    t.shapes.forEach(s=>{
+      const el = document.createElement('div');
+      el.className = 'space-shape' + (s.approx ? ' approx' : '');
+      el.dataset.id = s.id;
+      el.style.left = s.x+'px'; el.style.top = s.y+'px';
+      el.style.width = s.w+'px'; el.style.height = s.h+'px';
+      if(s.clip) el.style.clipPath = s.clip;
+      el.innerHTML = `<span class="lbl">${s.name}</span>`;
+      el.addEventListener('click', ()=> selectSpace(s.id, t.id));
+      canvas.appendChild(el);
+    });
+
+    const othersWrap = panel.querySelector(`[data-others="${t.id}"]`);
+    if(othersWrap){
+      t.others.forEach(s=>{
+        const c = document.createElement('button');
+        c.className = 'other-card' + (s.approx ? ' approx' : '');
+        c.dataset.id = s.id;
+        c.innerHTML = `<div class="name">${s.name}</div><div class="cap">${s.cap||''}</div>`;
+        c.addEventListener('click', ()=> selectSpace(s.id, t.id));
+        othersWrap.appendChild(c);
+      });
+    }
+
+    if(t.connection){
+      const row = panel.querySelector('#connectRow');
+      connectNodes.forEach((n,i)=>{
+        const node = document.createElement('div');
+        node.className = 'connect-node' + (n.hi ? ' hi' : '');
+        node.innerHTML = `<span class="k">${n.k}</span><span class="v">${n.v}</span>`;
+        row.appendChild(node);
+        if(i < connectNodes.length-1){
+          const arrow = document.createElement('div');
+          arrow.className = 'connect-arrow';
+          row.appendChild(arrow);
+        }
+      });
+    }
+
+    panel.querySelector(`[data-q="${t.id}"]`).addEventListener('input', e=>{
+      tabState[t.id].q = e.target.value.toLowerCase().trim();
+      applyFilters(t.id);
+    });
+    panel.querySelector(`[data-libre="${t.id}"]`).addEventListener('change', e=>{
+      tabState[t.id].libre = e.target.checked; applyFilters(t.id);
+    });
+    panel.querySelector(`[data-asignado="${t.id}"]`).addEventListener('change', e=>{
+      tabState[t.id].asignado = e.target.checked; applyFilters(t.id);
+    });
+    panel.querySelector(`[data-approx="${t.id}"]`).addEventListener('change', e=>{
+      tabState[t.id].approx = e.target.checked; applyFilters(t.id);
+    });
+    panel.querySelector(`[data-refresh="${t.id}"]`).addEventListener('click', ()=> loadAssignments());
+    panel.querySelector(`[data-copy="${t.id}"]`).addEventListener('click', ()=> copySummary(t.id));
+  });
+
+  function switchTab(id){
+    currentTab = id;
+    document.querySelectorAll('.tab').forEach(b=> b.dataset.active = (b.dataset.tab===id) ? 'true':'false');
+    document.querySelectorAll('.tab-panel').forEach(p=> p.dataset.visible = (p.dataset.panel===id) ? 'true':'false');
+  }
+
+  /* ---------------- FILTERS ---------------- */
+  function applyFilters(tabId){
+    const st = tabState[tabId];
+    const t = TABS.find(x=>x.id===tabId);
+    const check = (spaceId, name, approx)=>{
+      const list = assignments[spaceId] || [];
+      if(st.q && !name.toLowerCase().includes(st.q)) return false;
+      if(st.libre && list.length) return false;
+      if(st.asignado && !list.length) return false;
+      if(st.approx && !approx) return false;
+      return true;
+    };
+    t.shapes.forEach(s=>{
+      const el = document.querySelector(`.plan-canvas[data-canvas="${tabId}"] .space-shape[data-id="${s.id}"]`);
+      if(!el) return;
+      el.classList.toggle('dim', !check(s.id, s.name, !!s.approx));
+    });
+    t.others.forEach(s=>{
+      const el = document.querySelector(`.others-grid[data-others="${tabId}"] .other-card[data-id="${s.id}"]`);
+      if(!el) return;
+      el.style.display = check(s.id, s.name, !!s.approx) ? '' : 'none';
+    });
+  }
+
+  /* ---------------- STORAGE ---------------- */
+  async function loadAssignments(){
+    try{
+      const res = await window.storage.get(STORAGE_KEY, true);
+      assignments = res && res.value ? JSON.parse(res.value) : {};
+    }catch(e){ assignments = {}; }
+    refreshAll();
+    toast('Datos actualizados');
+  }
+  async function saveAssignments(){
+    try{
+      await window.storage.set(STORAGE_KEY, JSON.stringify(assignments), true);
+      toast('Cambios guardados');
+    }catch(e){ toast('No se pudo guardar (sin conexión)'); }
+  }
+  function toast(msg){
+    const t = document.getElementById('saveToast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(()=> t.classList.remove('show'), 1500);
+  }
+
+  function refreshAll(){
+    document.querySelectorAll('.space-shape').forEach(el=>{
+      const list = assignments[el.dataset.id] || [];
+      el.classList.toggle('assigned', !!list.length);
+    });
+    document.querySelectorAll('.other-card').forEach(el=>{
+      const list = assignments[el.dataset.id] || [];
+      el.classList.toggle('assigned', !!list.length);
+    });
+    let covered=0, people=0;
+    Object.values(assignments).forEach(l=>{ if(l&&l.length){covered++; people+=l.length;} });
+    document.getElementById('ctSpaces').textContent = Object.keys(ALL_SPACES).length;
+    document.getElementById('ctAssigned').textContent = covered;
+    document.getElementById('ctPeople').textContent = people;
+    TABS.forEach(t=> applyFilters(t.id));
+    if(selectedId) renderSidebar(selectedId, currentTab);
+  }
+
+  /* ---------------- SELECTION / SIDEBAR ---------------- */
+  function selectSpace(id, tabId){
+    selectedId = id;
+    currentTab = tabId;
+    document.querySelectorAll('.space-shape.selected, .other-card.selected').forEach(el=> el.classList.remove('selected'));
+    const shapeEl = document.querySelector(`.plan-canvas[data-canvas="${tabId}"] .space-shape[data-id="${id}"]`);
+    if(shapeEl) shapeEl.classList.add('selected');
+    const cardEl = document.querySelector(`.others-grid[data-others="${tabId}"] .other-card[data-id="${id}"]`);
+    if(cardEl) cardEl.classList.add('selected');
+    renderSidebar(id, tabId);
+  }
+
+  function renderSidebar(id, tabId){
+    const sp = ALL_SPACES[id];
+    const sidebar = document.querySelector(`[data-sidebar="${tabId}"]`);
+    if(!sp || !sidebar) return;
+    sidebar.innerHTML = `
+      <div class="side-hotel">${HOTEL_LABEL[sp.hotel] || ''}${sp.approx ? ' · Zona aproximada' : ''}</div>
+      <div class="side-name">${sp.name}</div>
+      <div class="side-cap">${sp.cap || ''}</div>
+      <p class="form-label">Equipo asignado</p>
+      <div class="assignee-list" id="assigneeList"></div>
+      <p class="form-label">Nombre</p>
+      <input class="field" id="inputName" type="text" placeholder="Ej. Ana Pérez">
+      <p class="form-label">Rol</p>
+      <select class="field" id="inputRole">
+        <option>Coordinador general</option>
+        <option>Logística</option>
+        <option>Registro / Acreditación</option>
+        <option>Audio y video</option>
+        <option>Protocolo</option>
+        <option>Seguridad</option>
+        <option>Traducción / Relatoría</option>
+        <option>Transporte y enlace</option>
+        <option>Anfitrión de sala</option>
+        <option>Otro</option>
+      </select>
+      <button class="add-btn" id="addAssignee">Añadir al espacio</button>
+    `;
+    renderAssigneeList(id);
+    sidebar.querySelector('#addAssignee').addEventListener('click', ()=>{
+      const nameInput = sidebar.querySelector('#inputName');
+      const roleInput = sidebar.querySelector('#inputRole');
+      const name = nameInput.value.trim();
+      if(!name){ nameInput.focus(); return; }
+      const role = roleInput.value;
+      if(!assignments[id]) assignments[id] = [];
+      assignments[id].push({name, role});
+      nameInput.value = '';
+      saveAssignments();
+      refreshAll();
+      renderAssigneeList(id);
+    });
+  }
+
+  function renderAssigneeList(id){
+    const wrap = document.getElementById('assigneeList');
+    if(!wrap) return;
+    const list = assignments[id] || [];
+    wrap.innerHTML = '';
+    if(!list.length){
+      wrap.innerHTML = `<div class="no-assignees">Sin personal asignado aún.</div>`;
+      return;
+    }
+    list.forEach(p=>{
+      const row = document.createElement('div');
+      row.className = 'assignee';
+      row.innerHTML = `<div><div class="who">${p.name}</div><div class="role">${p.role}</div></div>`;
+      const del = document.createElement('button');
+      del.className = 'del-btn'; del.textContent = 'Quitar';
+      del.addEventListener('click', ()=>{
+        assignments[id] = (assignments[id]||[]).filter(x=> !(x.name===p.name && x.role===p.role));
+        saveAssignments(); refreshAll(); renderAssigneeList(id);
+      });
+      row.appendChild(del);
+      wrap.appendChild(row);
+    });
+  }
+
+  /* ---------------- COPY SUMMARY ---------------- */
+  function copySummary(tabId){
+    const t = TABS.find(x=>x.id===tabId);
+    const spaceIds = [].concat(t.shapes.map(s=>s.id), t.others.map(s=>s.id));
+    let lines = [`MINUME XVII — ${HOTEL_LABEL[tabId]} — Resumen de asignaciones`, ''];
+    let any = false;
+    spaceIds.forEach(id=>{
+      const list = assignments[id] || [];
+      const name = ALL_SPACES[id].name;
+      if(list.length){
+        any = true;
+        lines.push(`${name}:`);
+        list.forEach(p=> lines.push(`  - ${p.name} (${p.role})`));
+      }
+    });
+    if(!any) lines.push('Sin asignaciones registradas todavía.');
+    const text = lines.join('\n');
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(()=> toast('Resumen copiado')).catch(()=> toast('No se pudo copiar'));
+    }else{
+      toast('Copiado no disponible en este navegador');
+    }
+  }
+
+  loadAssignments();
+})();
+</script>
+</body>
+</html>
